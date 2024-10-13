@@ -1,0 +1,50 @@
+@startuml
+left to right direction
+
+entity "Chapters" {
+    + id_chapter : INTEGER <<PK>>
+    --
+    name : TEXT <<UNIQUE>>
+    introduction : TEXT
+    notes : TEXT
+}
+
+entity "Blocks" {
+    + id_chapter : INTEGER <<FK>>
+    + id_block : INTEGER <<PK>>
+    --
+    name : TEXT
+    description : TEXT
+    inclusion : TEXT
+    exclusion : TEXT
+    href : TEXT
+}
+
+entity "Codes" {
+    + id_chapter : INTEGER <<FK>>
+    + id_block : INTEGER <<FK>>
+    + id_code : INTEGER <<PK>>
+    --
+    name : TEXT
+    description : TEXT
+    inclusion : TEXT
+    exclusion : TEXT
+}
+
+entity "SubCodes" {
+    + id_chapter : INTEGER <<FK>>
+    + id_block : INTEGER <<FK>>
+    + id_code : INTEGER <<FK>>
+    + id_sub_code : INTEGER <<PK>>
+    --
+    name : TEXT
+    description : TEXT
+    inclusion : TEXT
+    exclusion : TEXT
+}
+
+Chapters ||--o{ Blocks : "contains"
+Blocks ||--o{ Codes : "contains"
+Codes ||--o{ SubCodes : "contains"
+
+@enduml
