@@ -1,0 +1,187 @@
+<html>
+
+<head>
+    <title>Buscador de Contenido</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        div {
+            margin: 20px 0;
+        }
+
+        .result {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background-color: yellow;
+        }
+
+        .result {
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="main_offline_website.css">
+</head>
+
+<body>
+    <div id="search-bar">
+        <h1>Buscador de Contenido</h1>
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button id="searchButton">Buscar</button>
+        <p id="resultCount"></p>
+        <div id="results">
+        </div>
+    </div>
+    <div id="main_menu">
+        <iframe src="00_Menu.html" height="100%" width="100%" style="border:none;" title="menu"></iframe>
+    </div>
+    <div id="content">
+        <iframe name="main-content-frame" height="100%" width="100%" style="border:none;" title="content"></iframe>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('searchButton').addEventListener('click', function () {
+                let searchQuery = document.getElementById('searchInput').value.toLowerCase();
+                let contentDiv = document.getElementById('content');
+                let resultsDiv = document.getElementById('results');
+                let resultCount = document.getElementById('resultCount');
+                resultsDiv.innerHTML = ''; // Limpiar resultados anteriores
+
+                if (searchQuery.length < 2) { // Longitud mínima de búsqueda
+                    return;
+                }
+
+                let elements = contentDiv.querySelectorAll('.Block, .Category1, .Category2'); // Buscar en los elementos con clase 'Category2' .Category1, , .Category1, .Category2
+                // Inicializar un array para elementos únicos y un Set para ids vistos
+                let uniqueElements = [];
+                let seenIds = new Set();
+
+                // Recorrer cada bloque
+                elements.forEach(block => {
+                    // Encontrar el elemento <a> dentro de cada bloque
+                    let anchor = block.querySelector('a');
+                    if (anchor) {
+                        let id = anchor.id; // Obtener el id del <a>
+
+                        // Si el id no ha sido visto, agregar el bloque y marcar el id como visto
+                        if (!seenIds.has(id)) {
+                            seenIds.add(id); // Marcar el id como visto
+                            uniqueElements.push(block); // Agregar el bloque a la lista de únicos
+                        }
+                    }
+                });
+                let foundCount = 0;
+
+                uniqueElements.forEach((element) => {
+                    let textContent = element.textContent.toLowerCase();
+                    if (textContent.includes(searchQuery)) {
+                        foundCount++;
+                        if (element.classList.contains('Category2')) {
+                            resultsDiv.appendChild(decode_category2(element, searchQuery));
+                        }
+                        else if (element.classList.contains('Category1')) {
+                            resultsDiv.appendChild(decode_category1(element, searchQuery));
+                        }
+                        else if (element.classList.contains('Block')) {
+                            resultsDiv.appendChild(decode_block(element, searchQuery));
+                        }
+                    }
+                });
+
+                // Actualizar el número de resultados encontrados
+                resultCount.innerHTML = `Found: ${foundCount}`;
+
+                if (foundCount === 0) {
+                    resultsDiv.innerHTML = 'No results found';
+                }
+            });
+        });
+
+        function highlight_match(element, searchQuery) {
+            let textContent = element.textContent.toLowerCase();
+            // Buscar el término en el contenido y extraer una frase relevante
+            let end_line = '\\.!?'
+            let regex = new RegExp(`[^\\r\\n]*finger[^\\r\\n]*`, 'gi');
+            let match = textContent.match(regex);
+            if (match) {
+                snippet = match[0].trim();
+            }
+            else {
+                console.log(textContent);
+                snippet = "NOT_FOUND"
+            }
+
+            // Resaltar la palabra encontrada
+            snippet = snippet.replace(
+                new RegExp(searchQuery, 'gi'),
+                (match) => `<span class="highlight">${match}</span>`
+            );
+
+            return snippet;
+        }
+
+        function decode_category2(element, searchQuery) {
+            //Get code, label and link
+            let codeElement = element.querySelector('a.code');
+            let labelElement = element.querySelector('span.label');
+            let codeText = codeElement ? codeElement.textContent : 'Code not found';
+            let labelText = labelElement ? labelElement.textContent : 'Label not found';
+            let link = codeElement.id;
+
+            let highlighted_text = highlight_match(element, searchQuery);
+            // Crear el resultado con el formato solicitado
+
+            let resultItem = document.createElement('div');
+            resultItem.className = 'result';
+            resultItem.innerHTML = `<a href='#${link}'><strong>${codeText} ${labelText}</strong><a><br>${highlighted_text}`;
+            return resultItem;
+        }
+        function decode_category1(element, searchQuery) {
+            //Get code, label and link
+            let codeElement = element.querySelector('a.code');
+            let labelElement = element.querySelector('span.label');
+            let codeText = codeElement ? codeElement.textContent : 'Code not found';
+            let labelText = labelElement ? labelElement.textContent : 'Label not found';
+            let link = codeElement.id;
+
+            let highlighted_text = highlight_match(element, searchQuery);
+            // Crear el resultado con el formato solicitado
+
+            let resultItem = document.createElement('div');
+            resultItem.className = 'result';
+            resultItem.innerHTML = `<a href='#${link}'><strong>${codeText} ${labelText}</strong><a><br>${highlighted_text}`;
+            return resultItem;
+        }
+        function decode_block(element, searchQuery) {
+            //console.log("Block: ", element)
+            //Get code, label and link
+            let codeElement = element.querySelector('a.anchor');
+            let codeText = codeElement ? codeElement.getAttribute('name') : 'Code not found';
+            let labelText = codeElement ? codeElement.textContent : 'Label not found';
+            let link = codeElement.id;
+
+            let highlighted_text = highlight_match(element, searchQuery);
+            // Crear el resultado con el formato solicitado
+
+            let resultItem = document.createElement('div');
+            resultItem.className = 'result';
+            resultItem.innerHTML = `<a href='#${link}'><strong>${codeText} ${labelText}</strong><a><br>${highlighted_text}`;
+            return resultItem;
+        }
+    </script>
+</body>
+
+</html>

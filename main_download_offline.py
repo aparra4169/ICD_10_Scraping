@@ -1,3 +1,8 @@
+"""
+Descargar y guarda en offline la web.
+Cambia todos los links internos para apuntar a los .html locales
+"""
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -186,7 +191,7 @@ def scrape_chapter(driver, filters: List[str]) -> List[Chapter]:
 
 def generate_menu(data: List[Chapter]):
     # Comenzar el HTML del menú
-    html_menu = '<ul>\n'
+    html_menu = '<div id="main-menu"><ul>\n'
     
     for chapter in data:
         # Añadir el nombre del capítulo
@@ -208,10 +213,10 @@ def generate_menu(data: List[Chapter]):
         html_menu += '    </li>\n'
     
     # Cerrar el menú
-    html_menu += '</ul>'
+    html_menu += '</ul>>/div>'
     
     # Save HTML content
-    with open(f"./offline_website/menu.html", "w", encoding="utf-8") as file:
+    with open(f"./offline_website/00_Menu.html", "w", encoding="utf-8") as file:
         file.write(html_menu)
 
 def scrape_icd10_data():

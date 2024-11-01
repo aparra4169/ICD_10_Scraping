@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+}
+
+#left-panel {
+    width: 250px; /* Ancho fijo para el panel izquierdo */
+    padding: 10px;
+    border-right: 1px solid #ccc; /* Línea divisoria a la derecha */
+    box-sizing: border-box; /* Incluye padding en el cálculo del ancho */
+    display: flex;
+    flex-direction: column; /* Organiza el contenido en columna */
+}
+
+#search-bar {
+    margin-bottom: 20px; /* Espacio inferior entre el buscador y el menú */
+}
+
+#main-menu {
+    margin-top: 0; /* Elimina cualquier margen superior */
+}
+
+#main-content {
+    padding: 20px;
+    flex-grow: 1; /* Permite que el contenido principal ocupe el espacio restante */
+}
+
+input[type="text"] {
+    width: 100%; /* Campo de búsqueda a 100% de ancho */
+    padding: 10px;
+    margin-bottom: 10px; /* Espacio inferior */
+}
+
+.result {
+    border: 1px solid #ccc; /* Borde para los resultados de búsqueda */
+    padding: 10px;
+    margin-bottom: 10px; /* Espacio entre resultados */
+}
+
+/* Opcional: Estilo para la

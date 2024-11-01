@@ -1,3 +1,7 @@
+"""
+Combina en un solo .html los ficheros descargados con el script combinar_offline.py.
+Añade además el buscador de contenido
+"""
 import os
 from bs4 import BeautifulSoup
 import re
@@ -52,12 +56,7 @@ def generar_html(contenido):
         archivo.write('<html>\n')
         archivo.write('<head>\n')
         archivo.write('<title>Buscador de Contenido</title>\n')
-        archivo.write('<style>\n')
-        archivo.write('body { font-family: Arial, sans-serif; margin: 20px; }\n')
-        archivo.write('input[type="text"] { width: 100%; padding: 10px; margin-bottom: 20px; }\n')
-        archivo.write('div { margin: 20px 0; }\n')
-        archivo.write('.result { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }\n')
-        archivo.write('</style>\n')
+        archivo.write('<link rel="stylesheet" type="text/css" href="main_offline_website.css">\n')  # Enlace al CSS
         archivo.write('<script>\n')
         archivo.write('function buscarContenido() {\n')
         archivo.write('  const input = document.getElementById("buscador").value.toLowerCase();\n')
@@ -85,10 +84,12 @@ def generar_html(contenido):
         archivo.write('<body>\n')
         
         # Añadir el buscador
+        archivo.write('<div id="search-bar">\n')
         archivo.write('<h1>Buscador de Contenido</h1>\n')
         archivo.write('<input type="text" id="buscador" onkeyup="buscarContenido()" placeholder="Buscar...">\n')
         archivo.write('<div id="resultados"></div>\n')
-        
+        archivo.write('</div>\n')
+
         # Contenido combinado
         archivo.write(contenido)
         archivo.write('</body>\n')
